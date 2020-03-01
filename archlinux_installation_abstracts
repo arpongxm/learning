@@ -1,0 +1,61 @@
+archlinux_installation_abstracts
+
+1. ls /sys/firmware/efi/efivars
+2. wifi-menu
+3. timedatectl set-ntp true
+4. fdisk
+5. mkfs.ext4 /dev/sda1
+6. mkswap; swapon /dev/sda3
+7. mount /mnt /dev/sda2
+8. cd mnt/; mkdir boot
+9. mount /mnt/boot /dev/sda1
+10. vim /etc/pacman.d/mirrorlist (tsinghua.edu.cn...)
+11. genfatb -U /mnt >> /mnt/etc/fstab
+12. pacstrap /mnt base base-devel 
+13. arch-chroot /mnt
+14. pacman -S grub
+15. grub-install /dev/sda
+16. grub-mkconfig -o /boot/grub/grub.cfg
+17. ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+18. hwclock --systohc
+19. pacman -S vim dialog iw wpa_supplicant networkmanager netctl dhcpcd linux linux-firmware linux-headers
+20. vim /etc/locale.gen; en_US.UTF-8; zh_CN.UTF-8; 
+21. locale-gen
+22. echo "MyHostName" >> /etc/hostname
+23. vim /etc/hosts (127.0.0.1    localhost...)
+24. useradd -m -G wheel -s /bin/bash NewUserName
+25. passwd NewUserName
+26. pacman -S sudo
+27. visudo (#%wheel....)
+
+28. pacman -Syu xorg xorg-init
+29. pacman -Syu gnome gnome-extra
+30. cp /etc/X11/xinit/xinitrc ~/.xinitrc
+	export XDG_CURRENT_DESKTOP=GNOME-Classic:GNOME
+	export GNOME_SHELL_SESSION_MODE=classic
+	exec gnome-session --session=gnome-classic
+31. pacman -Syu gdm
+32. systemctl enable gdm
+33. systemctl start gdm
+
+34. pacman -S wqy-zenhei ttf-dejavu wqy-microhei
+35. pacman -S firefox
+
+36. pacman -S fcitx-im fcitx-configtool fcitx-googlepinyin
+37. vim .xinitrc 
+	export GTK_IM_MODULE=fcitx
+	export QT_IM_MODULE=fcitx
+	export XMODIFIERS="@im=fcitx"
+	fcitx &
+38. cp /etc/xdg/autostart/fcitx-autostart.desktop ~/.config/autostart/
+39. vim ~/.pam_environment 
+	~/.pam_environment
+
+	GTK_IM_MODULE=fcitx
+	QT_IM_MODULE=fcitx
+	XMODIFIERS=@im=fcitx
+40. 
+
+
+
+
