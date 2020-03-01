@@ -1,0 +1,55 @@
+查看开机启动项
+在过去，你能很容易通过查看 /etc/init.d 了解到哪些服务进程会在引导时启动。
+Systemd 以不同的方式展现，你可以使用如下命令罗列允许开机启动的服务进程。
+$ systemctl list-unit-files --type=service | grep enabled 
+
+通过执行命令可以获得如下服务列表：
+$ systemctl list-unit-files --type=service 
+
+哪些服务能够禁止？
+
+    accounts-daemon.service 是一个潜在的安全风险。它是 AccountsService 的一部分，AccountsService 允许程序获得或操作用户账户信息。我不认为有好的理由能使我允许这样的后台操作，所以我选择掩盖mask该服务进程。
+    avahi-daemon.service 用于零配置网络发现，使电脑超容易发现网络中打印机或其他的主机，我总是禁用它，别漏掉它。
+    brltty.service 提供布莱叶盲文设备支持，例如布莱叶盲文显示器。
+    debug-shell.service 开放了一个巨大的安全漏洞（该服务提供了一个无密码的 root shell ，用于帮助 调试 systemd 问题），除非你正在使用该服务，否则永远不要启动服务。
+    ModemManager.service 该服务是一个被 dbus 激活的守护进程，用于提供移动宽频broadband（2G/3G/4G）接口，如果你没有该接口，无论是内置接口，还是通过如蓝牙配对的电话，以及 USB 适配器，那么你也无需该服务。
+    pppd-dns.service 是一个计算机发展的遗物，如果你使用拨号接入互联网的话，保留它，否则你不需要它。
+    rtkit-daemon.service 听起来很可怕，听起来像是 rootkit。 但是你需要该服务，因为它是一个实时内核调度器real-time kernel scheduler。
+    whoopsie.service 是 Ubuntu 错误报告服务。它用于收集 Ubuntu 系统崩溃报告，并发送报告到 https://daisy.ubuntu.com 。 你可以放心地禁止其启动，或者永久的卸载它。
+    wpa_supplicant.service 仅在你使用 Wi-Fi 连接时需要。
+-----------------
+
+Systemd 提供了一些命令帮助调试系统开机启动问题。该命令会重演你的系统启动的所有消息。
+$ journalctl -b 
+通过命令 journalctl -b -1 可以复审前一次启动，journalctl -b -2 可以复审倒数第 2 次启动，以此类推。
+$ journalctl _PID=1 
+这些打印消息显示了什么被启动，或者是正在尝试启动。
+
+一个最有用的命令工具之一 systemd-analyze blame，用于帮助查看哪个服务进程启动耗时最长。
+$ systemd-analyze blame 
+
+===详细请参考原文：https://www.centos.bz/2018/03/systemd-下开机启动的优化，删除无用的systemd服务/
+
+=================
+===更详细请参考原文：http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html
+
+Systemd 入门教程：命令篇
+
+Systemd 是 Linux 系统工具，用来启动守护进程，已成为大多数发行版的标准配置。
+
+systemctl list-sockets
+
+# 查看启动耗时
+$ systemd-analyze                                                                                       
+
+# 查看每个服务的启动耗时
+$ systemd-analyze blame
+
+# 显示瀑布状的启动过程流
+$ systemd-analyze critical-chain
+
+# 显示指定服务的启动流
+$ systemd-analyze critical-chain atd.service
+...
+
+sztom osoft@qq.com CC-BY-NC-SA
